@@ -1,0 +1,692 @@
+{{ 'bootstrapgrid.css' | asset_url | stylesheet_tag }}
+<div class="container">
+  <div class="title-clearfix"><h1 style="font-weight:800; color:#ff8400; font-size: 36px;">{{ page.title }}</h1></div>
+  <div id="pre-calc" style="text-align:center;">
+<div class="row text-center mt20">
+  <div class="firstQues card col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-lg-6 col-md-6 col-sm-6" style="padding:30px;">
+    <!-- Create a barrier checkbox -->
+    <!--<div class="checkboxin"> 
+    <input id='createabarrier' type="checkbox"/>
+      <label for='createabarrier'><strong>Create a barrier</strong></label> 
+    </div>-->
+    
+    <!-- Length the customer will input -->
+    <div><strong>Create a dust barrier:</strong></div>
+    <div class="barrrierL col-lg-12 mt20">
+      <label for='barrierLength' class="col-lg-6 text-left"><strong>Barrier Length:</strong></label> 
+    <input id="barrierlength" type="number" placeholder="Enter Length" class="col-lg-6 usc-input"/>
+    <div id="errorLength" class="col-lg-12 mt20 alert alert-danger" style="display:none;">Please Enter a Length to calculate.</div>
+    </div>
+    <div class="tightlySeal col-lg-12">
+		<input id='tightlyseal' type="checkbox" class="col-lg-1"/>
+  		<label for='tightlyseal' class="col-lg-11 text-left">Tightly seal at walls and ceiling</label>
+        <span class="alert alert-danger m20 tightlySealEr col-lg-12" style="display:none;">Please Create a barrier</span>
+  	</div>
+    <!-- What the customer is measuring in -->
+    <div class="measureMent col-lg-12 mt20">      
+      <label for="measurement" class="col-lg-6 text-left"><strong>Choose Unit:</strong></label>
+    <select id="measurement" class="col-lg-6 usc-input col-md-12">
+      <option value="feet">Feet</option>
+      <option value="metres">Meters</option> 
+    </select>
+    </div>
+    
+    <!-- Height of the ceiling the customer is working on -->
+    <div class="ceilingHeight col-lg-12 mt20">
+      <label for="ceilingheight" class="col-lg-5 text-left"><strong>Ceiling Height:</strong></label>
+    <select id="ceilingheight" class="col-lg-7" style="height:44px;">
+      <option value="10">10 feet (3m) or less</option>
+      <option value="12">12 feet (3.6m) or less</option>
+      <option value="20">20 feet (6.1m) or less</option>
+    </select>
+    </div>
+  </div>
+  
+    <!-- Whether the customer wants to tightly seal or not -->
+    <div class="secondQues col-lg-3 col-md-4 col-sm-4">
+  </div>
+   <div class="thirdQues card col-lg-offset-3 col-lg-6 col-md-4 col-sm-4" style="padding:30px;">
+   <strong>Add an entry</strong>
+  <div class="addanEntry">
+  <!--<input id='addAnEntry' type="checkbox" class="col-lg-1" />
+    <label for='addAnEntry' class="col-lg-11 text-left"><strong>Zipper</strong></label>-->
+  </div>
+     <div class="zipperQ col-lg-12 text-center mt20">
+       <label for="zipperQty" class="col-lg-6 text-left"><strong>Quantity</strong></label>
+         <input id="zipperQty" type="number" class="col-lg-6 usc-input search-bar__input"/>
+         <div id="errorLengthZip" class="col-lg-12 mt20 alert alert-danger" style="display:none;">Quantity has to be greater than 0 to calculate.</div>
+     </div>
+     {% comment %}
+     Inputs for the magnetic ZipWall product.     
+    
+     <div class="magneticdoorContainer col-lg-12 mt20">
+      <input id="magneticDoor" class="col-lg-3" type="checkbox" />
+     <label for="mageneticDoor" class="col-lg-9 text-left"><strong>Magnetic Door</strong></label>
+     </div>
+     
+     <div class="magneticDoorQuantity col-lg-12 mt20">
+     <label for="magneticDoorQty" class="col-lg-6 text-left"><strong>Quantity</strong></label>
+     <input id="magneticDoorQty" type="number" class="col-lg-6"/>
+     </div>
+     {% endcomment %}
+  </div>
+  <div class="fourthQues card col-lg-offset-3 col-lg-6 col-md-4 col-sm-4" style="padding:30px;">
+    
+  <!--<input id='coverDoorway' type="checkbox" class="col-lg-1"/>-->
+    <div for='coverDoorway'class="text-center"><strong>Cover a doorway</strong></div>
+    <select id="stndorcom" class="col-lg-12 usc-input">
+     <option value="standard">Standard</option>
+     <option value="commercial">Commercial</option>
+	</select>
+    <div class="col-lg-12 text-center mt20">
+    <label for='coverDoorwayQty' class="col-lg-6 text-left"><strong>Quantity</strong></label>
+    <input id="coverDoorwayQty" type="number" class="search-bar__input usc-input col-lg-6"/>
+    </div>
+  </div>
+  {% comment %}
+  	Input for zipfast product
+  <div class="fifthQues col-lg-3 col-md-4 col-sm-4">
+<input id='zipFast' type="checkbox"  />
+  <label for='zipFast'>Use ZipFast panels</label>
+    <span>ZipFast™ Panels are a reusable alternative to plastic sheeting.
+For ceilings up to 12 feet (3.7m) high</span>
+  </div>
+  {% endcomment %}
+  </div>
+  <button class="button--primary button--full button--large" id='calculate' style="width: 50%; margin-bottom:30px;">Calculate</button>
+    <!-- Added from Zipwall calc 
+    <p class="line-item-property__field">
+  <label>Add this</label><br>
+  <input type="radio" name="properties[Add this]" value="2-pack"> <span>2-pack</span><br>
+</p>
+-->
+  </div>
+</div>
+<style>
+  #recommendedProds td{
+   text-align: center;
+  
+  }
+  #recommendedProds {
+   width:100%;
+  }
+</style>
+<script> 
+  function checkOptions(){
+   /* true or false */  var createaBarrier = $('#createabarrier').prop('checked');
+    
+   /* length of barrier */  var barrierLength = $('#barrierlength').val();
+    /* option */ var metreorFeet = $('#measurement').val();
+    /* option */ var ceilingHeight = $('#ceilingheight').val();
+    
+  /* true or false */   var tightlySeal = $('#tightlyseal').prop('checked');
+    
+  /* true or false */  var zipDoor = $('#addAnEntry').prop('checked');
+  /* quantity */  var zipQty = $('#zipperQty').val();
+     /* true or false */ //var magneticDoor = $('#magneticDoor').val();
+    /* magnetic quantity */ //var magneticQty = $('#magneticDoorQty').val();
+    
+    /* coverDoorway true or false */ var coverDoorway = $('#coverDoorway').prop('checked');
+    /* cover quantity */ var coverDoorwayQty = $('#coverDoorwayQty').val();
+    /* Standard or commercial */var standardorcommerical = $('#stndorcom').val();
+    
+    //Dont sell zipfast var zipFast = $('#zipFast').prop('checked');
+    //var allOptions = { createaBarrieroption: createaBarrier, tightlySealoption: tightlySeal, zipDooroption: zipDoor, coverDoorwayoption: coverDoorway };
+    //console.log(createaBarrier, barrierLength, metreorFeet, ceilingHeight);
+    
+    /* error handling */
+   
+  if(barrierLength == "" && zipQty == "" && coverDoorwayQty == ""){
+    alert("Please Enter a length to calculate");
+  }
+    if(barrierLength == "" && tightlySeal == true){
+      document.querySelector('#errorLength').style.display = "block";
+      console.log(createaBarrier, barrierLength, metreorFeet, ceilingHeight);
+  }
+   
+    if(zipQty != ""){
+      if(zipQty <= 0){
+      $('#errorLengthZip').css("display", "block");
+      }
+      else {
+      $('#errorLengthZip').css("display", "none");
+
+      }
+    }
+    else {
+      $('#errorLengthZip').css("display", "none");
+
+    }
+    
+    if( tightlySeal == true && barrierLength == "" && zipQty > 0){
+    }
+      else {
+     if(barrierLength != "" && barrierLength >= 1 || zipQty != "" && zipQty >= 1 || coverDoorwayQty != "" || barrierLength != "" && tightlySeal == true){
+        calculate(createaBarrier, barrierLength, metreorFeet, ceilingHeight, tightlySeal, zipDoor, zipQty, coverDoorway, coverDoorwayQty, standardorcommerical);
+        checkedZipProds();
+     }
+      }
+    
+    /*if(tightlySeal == true && barrierLength == ""){
+      $('.tightlySealEr').css("display", "block");
+    }
+    else {
+      $('.tightlySealEr').css("display", "none");
+    }*/
+    /* Looping through the object I declared which which is all the values for the checkboxes 
+    for(var i = 0; i < allOptions.length; i++){
+      allOptions[i].checked;
+    }*/
+    /*if(zipQty <= 0){
+      document.querySelector('#errorLengthZip').style.display = "block";
+    }
+    else if(allOptions.){
+    document.querySelector('#errorLengthZip').style.display = "none";
+    calculate(barrierLength, metreorFeet, ceilingHeight, tightlySeal, zipDoor, zipQty);
+
+    }*/
+    
+  }
+  
+  /* error handling end */
+  
+  function calculate(createaBarrier, barrierLength, metreorfeet, ceilingHeight, tightlySeal, zipDoor, zipQty, coverDoorway,coverDoorwayQty, standardorcommerical){
+    /* Elements before calculate is pressed */ var preSubmit = $("#pre-calc");
+    
+    //scroll to the top of the page after caclulate has been pressed
+    $('html, body').scrollTop(0);
+    var Entries;
+    zipDoor == true ? Entries = zipQty : Entries = "False"; //* If Zipper checkbox is true sets entries variable to qty selected else sets entries to string false */
+    zipQty <= 1 ? Entries += " Zippered Entry" : Entries += " Zippered Entries"
+    $("<div class='youSel'><h2>You selected:</h2><strong>Barrier: " + barrierLength + " " + metreorfeet + " x " + ceilingHeight + " " + metreorfeet + " </strong><br><strong>Tightly seal at walls and ceiling:"+tightlySeal+ "</strong><br><strong>Entries: "+Entries+"</strong></div><h3 id='headingProd' class='mt20'>Recommended products for your project</h3>").insertAfter(preSubmit);
+    var firstPart = $('#headingProd');
+    var youSelec = $('.youSel');
+    var suggestedTable = $("<table id='recommendedProds'><tr><th>Product</th><th>Quantity</th><th>Unit Cost</th><th>Subtotal</th><th>Add this:</th><th>Purchase</th></tr>").insertAfter(firstPart);
+
+    var lengthinM;
+    var lengthinFt;
+    
+    var netTotal = 0;
+    console.log(lengthinM, lengthinFt);
+    if(metreorfeet == "feet"){
+      lengthinFt = parseInt(barrierLength);
+     lengthinM =  barrierLength / 3.2808;
+          console.log(lengthinM, lengthinFt);
+
+    }
+    if(metreorfeet == "metres"){
+      lengthinM = barrierLength;
+      lengthinFt = barrierLength * 3.2808;
+          console.log(lengthinM, lengthinFt);
+
+    }
+        console.log(lengthinM, lengthinFt);
+    if(tightlySeal == true) {
+       var recommendedPoles = (lengthinFt / 8);
+      var recommendedFoamrails = Math.ceil(lengthinFt / 8);
+       }
+  else {
+      var recommendedPoles = (lengthinFt / 10) + 1; /* Calculation to calculate number of poles needed */
+  }
+    
+        var qty = 0;
+    if(barrierLength != ""){
+    if(ceilingHeight == 10){
+         
+          /* variables for the 3m zipwall 2 pack */
+          var threemFourpack = { productTitle: "",  packQty: "4", price: 0, productDescription: "", productSku: "", productId: ""};
+          threemFourpack.productTitle = "{{ all_products["zipwall-reg-10-3-metre-poles-4-pack"].title }}";
+          /* To access the products SKU we loop over variants for that handle */
+          threemFourpack.price = "{{ all_products["zipwall-reg-10-3-metre-poles-4-pack"].price }}";
+          {% for variant in all_products["zipwall-reg-10-3-metre-poles-4-pack"].variants %}
+          threemFourpack.productSku = "{{ variant.sku }}";
+          threemFourpack.productId = "{{ variant.id }}";
+          {% endfor %}
+
+          /* variables for the 3m zipwall 2 pack */
+
+          var threemTwopack = { productTitle: "", packQty: "2", price: 0, productDescription: "", productSku: "", productId: ""};
+          threemTwopack.productTitle = "{{ all_products["zipwall-reg-10-3-metre-poles-2-pack"].title }}";
+          threemTwopack.price = "{{ all_products["zipwall-reg-10-3-metre-poles-2-pack"].price }}";
+          
+          {% for variant in all_products["zipwall-reg-10-3-metre-poles-2-pack"].variants %}
+          threemTwopack.productSku = "{{ variant.sku }}";
+          threemTwopack.productId = "{{ variant.id }}";
+          {% endfor %}
+
+          var recommendedProducts = [];
+          var recommendedFourPacks = recommendedPoles - threemFourpack.packQty;
+          var recommendedTwoPacks =  recommendedPoles - threemTwopack.packQty;
+          var additonalProdNeeded;
+          if(recommendedFourPacks > threemTwopack.packQty){
+            var additionalTitle = threemFourpack.productTitle;
+          }
+          else {
+           additionalTitle = threemTwopack.productTitle; 
+          }
+          /* If the length the user entered divided by 10 is a whole number */
+    	 if(Number.isInteger(recommendedPoles)){
+		 
+           /* if the the length / 10 is greater than 2 */
+          if(recommendedPoles > threemTwopack.packQty){
+           
+            /* Set zipProdTitle to title */ 
+            var zipProdTitle = threemFourpack.productTitle;
+            var zipProdSku = threemFourpack.productSku;
+            var zipProdId = threemFourpack.productId;
+            
+            var qty = Math.floor(recommendedPoles / threemFourpack.packQty);
+            
+            if(Number.isInteger(recommendedPoles % threemFourpack.packQty)){
+            var qtyRem = recommendedPoles % threemFourpack.packQty; /* 27/10 2.7 | 3 3 * 4 = 12 | 50/10 5 | 5 * 4 = 20  */
+            
+            /* IF the recommended amount of poles divided by 4 is a decimal */
+            if(qtyRem > threemTwopack.packQty){
+              qty++;
+           
+            }
+            else if(qtyRem <= threemTwopack.packQty && qtyRem != 0){
+              additonalProdNeeded = true;
+              var additionalQty = 1;
+              var additionalUnitCost = Shopify.formatMoney(threemTwopack.price, window.theme.moneyFormat);
+              additionalTitle = threemTwopack.productTitle;
+              var additionalsubTotal = Shopify.formatMoney(additionalQty * threemTwopack.price, window.theme.moneyFormat);
+              netTotal += additionalQty * threemTwopack.price;
+            }
+            }
+            var subTotal = Shopify.formatMoney(qty * threemFourpack.price, window.theme.moneyFormat);
+            netTotal += qty * threemFourpack.price;
+            var unitCost = Shopify.formatMoney(threemFourpack.price, window.theme.moneyFormat);
+          }  
+   		   /* If number of poles is less than 2 or equal */       
+           else {
+            zipProdTitle = threemTwopack.productTitle;
+            zipProdSku = threemTwopack.productSku;
+            zipProdId = threemTwopack.productId;
+            qty = recommendedPoles / threemTwopack.packQty;
+            var unitCostcents = qty * threemFourpack.price;
+            netTotal += unitCostcents;
+ 
+            var subTotal = Shopify.formatMoney(unitCostcents);
+            var unitCost = Shopify.formatMoney(threemFourpack.price, window.theme.moneyFormat);
+          }
+        } 
+        /* If the length the user entered divided by 10 isn't a whole number*/
+          else
+        {
+          if(recommendedPoles > threemTwopack.packQty){
+           
+            /* Set zipProdTitle to title */ 
+            var zipProdTitle = threemFourpack.productTitle;
+            zipProdSku = threemFourpack.productSku;
+            zipProdId = threemFourpack.productId;
+            
+            qty = Math.round(recommendedPoles / threemFourpack.packQty);
+            qtyRem = recommendedPoles % threemFourpack.packQty; 
+            if(qtyRem > 2){ }
+            else {
+              additonalProdNeeded = true;
+              var additionalQty = 1;
+              var additionalUnitCost = Shopify.formatMoney(threemTwopack.price, window.theme.moneyFormat);
+              additionalsubTotal = Shopify.formatMoney(threemTwopack.price * additionalQty); 
+              netTotal += threemTwopack.price * additionalQty;
+              additionalTitle = threemTwopack.productTitle; 
+              var addzipProdId = threemTwopack.productId;
+            }
+            var unitCostcents = qty * threemFourpack.price;
+            var subTotal = Shopify.formatMoney(unitCostcents, window.theme.moneyFormat);
+            netTotal += unitCostcents;
+
+            var unitCost = Shopify.formatMoney(threemFourpack.price, window.theme.moneyFormat);
+          } 
+   	       /* If number of poles is less than 2 or equal */       
+           else {
+            zipProdTitle = threemTwopack.productTitle;
+            zipProdSku = threemTwopack.productSku;
+            zipProdId = threemTwopack.productId;
+            qty = Math.round(recommendedPoles / threemTwopack.packQty);
+             if(recommendedPoles < 1){
+               qty = 1;
+             }
+         	/* Calculated cost of product price multiplied by quantity suggested */
+             var unitCostcents = qty * threemTwopack.price;
+             var subTotal = Shopify.formatMoney(unitCostcents, window.theme.moneyFormat);
+             netTotal += unitCostcents;
+            var unitCost = Shopify.formatMoney(threemTwopack.price, window.theme.moneyFormat);
+          }
+        }
+          
+    }
+    // 44 as user entry only shows 1 4 pack
+    if(ceilingHeight == 12){
+          
+      var threemsixTwopack = { productTitle: "", packQty: "2", price: 0, productDescription: "", productSku: "", productId: ""};
+          threemsixTwopack.productTitle = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-2"].title }}";
+          threemsixTwopack.price = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-2"].price }}";
+          {% for variant in all_products["zipwall-12-3-6-metre-poles-pack-of-2"].variants %}
+          threemsixTwopack.productSku = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-2"].variants.sku }}";
+          threemsixTwopack.productId = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-2"].id }}";
+          {% endfor %}
+          var threemsixFourpack = { productTitle: "", packQty: "4", price: 0, productDescription: "", productSku: "", productId: ""};
+      	  threemsixFourpack.productTitle = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-4"].title }}"
+          threemsixFourpack.price = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-4"].price }}";
+          {% for variant in all_products["zipwall-12-3-6-metre-poles-pack-of-4"].variants %}
+          threemsixFourpack.productSku = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-4"].variants.sku }}";
+          threemsixFourpack.productId = "{{ all_products["zipwall-12-3-6-metre-poles-pack-of-4"].id }}";
+          {% endfor %}
+
+    	if(Number.isInteger(recommendedPoles)){
+          if(recommendedPoles > threemsixTwopack.packQty){
+          zipProdTitle  = threemsixFourpack.productTitle;
+          zipProdSku = threemsixFourpack.productSku;
+          zipProdId = threemsixFourpack.productId;
+          
+          var qty = Math.floor(recommendedPoles / threemsixFourpack.packQty);
+          
+          if(Number.isInteger(recommendedPoles % threemsixFourpack.packQty)){
+             var qtyRem = recommendedPoles % threemsixFourpack.packQty;
+            if(qtyRem > threemsixTwopack.packQty){
+             additonalProdNeeded = true;
+              additionalQty = 1;
+              additionalUnitCost = threemsixFourpack.price;
+              additionalTitle = threemsixFourpack.productTitle;
+            }else if(qtyRem <= threemsixTwopack.packQty && qtyRem != 0){
+              additonalProdNeeded = true;
+              var additionalQty = 1;
+              var additionalUnitCost = Shopify.formatMoney(threemsixTwopack.price, window.theme.moneyFormat);
+              additionalTitle = threemsixTwopack.productTitle;
+              var additionalsubTotal = Shopify.formatMoney(additionalQty * threemsixTwopack.price, window.theme.moneyFormat);
+            }
+             }
+             var subTotal = Shopify.formatMoney(qty * threemFourpack.price, window.theme.moneyFormat);
+             netTotal += qty * threemFourpack.price;
+            var unitCost = Shopify.formatMoney(threemFourpack.price, window.theme.moneyFormat);
+            
+         }
+            else {
+              
+            zipProdTitle = threemsixTwopack.productTitle;
+            zipProdSku = threemsixTwopack.productSku;
+            zipProdId = threemsixTwopack.productId;
+            qty = recommendedPoles / threemsixTwopack.packQty;
+            var unitCostcents = qty * threemsixFourpack.price;
+            var subTotal = Shopify.formatMoney(unitCostcents, window.theme.formatMoney);
+            netTotal += unitCostcents;
+            var unitCost = Shopify.formatMoney(threemsixFourpack.price, window.theme.formatMoney);
+        }
+        }else
+       {
+          if(recommendedPoles > threemsixTwopack.packQty){
+           
+            /* Set zipProdTitle to title */ 
+            var zipProdTitle = threemsixFourpack.productTitle;
+            zipProdSku = threemsixFourpack.productSku;
+            zipProdId = threemsixFourpack.productId;
+            
+            qty = Math.round(recommendedPoles / threemsixFourpack.packQty);
+            qtyRem = recommendedPoles % threemsixFourpack.packQty; 
+            if(qtyRem > 2){ }
+            else {
+              additonalProdNeeded = true;
+              var additionalQty = 1;
+              var additionalUnitCost = Shopify.formatMoney(threemsixTwopack.price, window.theme.moneyFormat);
+              additionalTitle = threemsixTwopack.productTitle; 
+            }
+            var unitCostcents = qty * threemsixFourpack.price;
+            var subTotal = Shopify.formatMoney(unitCostcents, window.theme.moneyFormat);
+            netTotal += unitCostcents;
+            var unitCost = Shopify.formatMoney(threemsixFourpack.price, window.theme.moneyFormat);
+          } 
+   	       /* If number of poles is less than 2 or equal */       
+           else {
+            zipProdTitle = threemsixTwopack.productTitle;
+            zipProdSku = threemsixTwopack.productSku;
+            zipProdId = threemsixTwopack.productId;
+            qty = Math.round(recommendedPoles / threemsixTwopack.packQty);
+             if(recommendedPoles < 1){
+               qty = 1;
+             }
+         	/* Calculated cost of product price multiplied by quantity suggested */
+             var unitCostcents = qty * threemsixTwopack.price;
+             var subTotal = Shopify.formatMoney(unitCostcents, window.theme.moneyFormat);
+             netTotal += unitCostcents;
+            var unitCost = Shopify.formatMoney(threemsixTwopack.price, window.theme.moneyFormat);
+          }
+        }
+    }
+    if(ceilingHeight == 20){}
+    //suggestedTable.find("tbody").append("<tr><td>" + zipProdTitle + "</td><td>"+ qty +"</td><td>"+unitCost+"</td><td>"+ subTotal+"</td><td><input class='inputToAdd' type='checkbox' id="+zipProdId+"></td><td><div class='product-form__add-to-cart'><form method='post' action='/cart/add'><input type='hidden' name='id' data-sku=" + zipProdSku + " " + " value="+zipProdId+"> <input type='hidden' name='quantity' value='"+qty+"'><button type='submit' class='product-form__add-button button button--primary'>Add To Cart </button></form></div></td></tr>");
+    suggestedTable.find("tbody").append("<tr><td>" + zipProdTitle + "</td><td>"+ qty +"</td><td>"+unitCost+"</td><td>"+ subTotal+"</td><td><input class='inputToAdd' type='checkbox' data-quantity="+qty+" id="+zipProdId+"></td><td><button type='submit' class='product-form__add-button button button--primary'>Add To Cart </button></form></div></td></tr>");
+
+    }
+    
+    if(additonalProdNeeded == true){
+    suggestedTable.find("tbody").append("<tr><td>"+additionalTitle+"</td><td>"+additionalQty+"</td><td>"+ additionalUnitCost + "</td><td>"+additionalsubTotal+"</td><td><input class='inputToAdd' type='checkbox' data-quantity="+additionalQty+" id="+addzipProdId+"></td></tr>");
+    }
+     var Entries; 
+    /* IF user selected ten foot ceiling and barrierlength in feet is greater than 10 feet */
+       if(zipQty != "" && zipQty >= 1){
+         var recommendedZips = zipQty * 2; //6
+         var productIdInput;
+         var twoZippack = { productTitle: "", productPrice: 0, productSku: "", packQty: 2, productId: "" };
+         twoZippack.productTitle = "{{ all_products["zipwall-heavy-duty-zipper"].title }}";
+         twoZippack.productPrice = "{{ all_products["zipwall-heavy-duty-zipper"].price }}";
+         {% for variant in all_products["zipwall-heavy-duty-zipper"].variants %}
+         twoZippack.productId = {{ variant.id }};
+         
+         {% endfor %}
+         var suggestedTwoZips = (zipQty * 2) / twoZippack.packQty;
+        
+         
+         var twelveZippack = { productTitle: "", productPrice: 0, productSku: "", packQty: 12, productId:""};
+         twelveZippack.productTitle = "{{ all_products["zipwall-heavy-duty-zippers-hdaz12-pack-of-12"].title }}";
+         twelveZippack.productPrice = "{{ all_products["zipwall-heavy-duty-zippers-hdaz12-pack-of-12"].price }}";
+         {% for variant in all_products["zipwall-heavy-duty-zippers-hdaz12-pack-of-12"].variants %}
+         twelveZippack.productId = {{ variant.id }};
+         {% endfor %}
+         
+         if(recommendedZips > twoZippack.packQty){ //6*2 = 12 if its > 2
+         var suggestedZipprod = twelveZippack.productTitle;
+         var suggestedzipQty = Math.floor(recommendedZips / twelveZippack.packQty);
+           
+           if(!Number.isInteger(recommendedZips / twelveZippack.packQty)){
+            var zipQtyrem = recommendedZips % twelveZippack.packQty;
+              var additionalNeeded = recommendedZips - zipQtyrem;
+             if(additionalNeeded / twelveZippack.packQty > 0){
+               var additionalQty = additionalNeeded / twelveZippack.packQty;
+               var additionalSub = additionalQty * twelveZippack.productPrice;
+               netTotal += additionalSub;
+               productIdInput = twelveZippack.productId;
+              suggestedTable.find("tbody").append("<tr><td>"+twelveZippack.productTitle+"</td><td>"+additionalQty+"</td><td>"+Shopify.formatMoney(twelveZippack.productPrice,window.theme.moneyFormat)+"</td><td>"+Shopify.formatMoney(additionalSub, window.theme.moneyFormat)+"</td><td><input class='inputToAdd' type='checkbox' data-quantity="+additionalQty+ "id="+productIdInput+"></td></tr>"); 
+             }
+             if(zipQtyrem >= twelveZippack.packQty){
+               
+             } else {
+               suggestedZipprod
+               var suggestedTwopackreco = zipQtyrem / twoZippack.packQty;
+               suggestedZipprod = twoZippack.productTitle;
+               suggestedzipQty = suggestedTwopackreco;
+               var suggestedzipunitcost = twoZippack.productPrice;
+               var zipsub = suggestedzipunitcost * suggestedzipQty;
+               netTotal += zipsub;
+               productIdInput = twoZippack.productId;
+             }
+           } else
+           {
+             if(recommendedZips % twelveZippack.packQty >= 0){
+            var zipQtyrem = recommendedZips % twelveZippack.packQty;
+            suggestedTwopackreco = zipQtyrem / twoZippack.packQty; //Number of two packs needed if the amount of doors required * 2 isn't straight divisble by 12
+            suggestedzipunitcost = twelveZippack.productPrice;
+            suggestedZipprod = twelveZippack.productTitle;
+            var zipsub = suggestedzipunitcost * suggestedzipQty;
+            netTotal += zipsub;
+               productIdInput = twelveZippack.productId;
+             } 
+             else {
+               suggestedTwopackreco = recommendedZips / twoZippack.packQty;
+               suggestedZipprod = twoZippack.productTitle;
+               suggestedzipunitcost = twoZippack.productPrice;
+               productIdInput = twoZippack.productId;
+             }
+           }
+         }
+         else {
+          suggestedZipprod = twoZippack.productTitle;
+          suggestedzipQty = recommendedZips / twoZippack.packQty;
+          suggestedzipunitcost =  twoZippack.productPrice;
+          zipsub = twoZippack.productPrice * suggestedzipQty;
+          netTotal += zipsub;
+           productIdInput = twoZippack.productId;
+         }
+         suggestedTable.find("tbody").append("<tr><td><a href=''>"+suggestedZipprod+"</a></td><td>"+suggestedzipQty+"</td><td>"+ Shopify.formatMoney(suggestedzipunitcost, window.theme.moneyFormat)+"</td><td>"+Shopify.formatMoney(zipsub, window.theme.moneyFormat)+"</td><td><input class='inputToAdd' type='checkbox' data-quantity="+suggestedzipQty+" id="+productIdInput+"></td></tr>");
+       }
+    if(tightlySeal == true){
+    var recommendedFoamrails = Math.ceil(lengthinFt / 8);
+      if(recommendedFoamrails > 0){
+        var foamRailDet = { productTitle: "", productPrice: 0, productSku: "", productCoverage: 8, productId:""}
+        foamRailDet.productTitle = "{{ all_products["foamrail-span-adjustable-tapeless-seal"].title }}";
+        foamRailDet.productPrice = "{{ all_products["foamrail-span-adjustable-tapeless-seal"].price }}";
+        {% for variant in all_products["foamrail-span-adjustable-tapeless-seal"].variants %}
+        foamRailDet.productId = {{ variant.id }};
+        {% endfor %}
+        var noOfFoamrails = recommendedFoamrails;
+        var foamRailSub = foamRailDet.productPrice * recommendedFoamrails;
+        netTotal += foamRailSub;
+        suggestedTable.find("tbody").append("<tr><td>"+foamRailDet.productTitle+"</td><td>"+noOfFoamrails+"</td><td>"+Shopify.formatMoney(foamRailDet.productPrice, window.theme.moneyFormat)+"</td><td>"+Shopify.formatMoney(foamRailSub,window.theme.moneyFormat)+"</td><td><input class='inputToAdd' type='checkbox' data-quantity="+noOfFoamrails+" id="+foamRailDet.productId+"></td></tr>");
+      }
+      var sidePack = { productTitle: "", productPrice: 0, productId:"" };
+      sidePack.productTitle = "{{ all_products["sdpk-sidepack-wallmount-kit"].title }}"; 
+      sidePack.productPrice = Shopify.formatMoney({{ all_products["sdpk-sidepack-wallmount-kit"].price }}, window.theme.moneyFormat);
+      {% for variant in all_products["sdpk-sidepack-wallmount-kit"].variants %}
+      sidePack.productId = {{ variant.id }};
+      {% endfor %}
+      netTotal += {{ all_products["sdpk-sidepack-wallmount-kit"].price }};
+      suggestedTable.find("tbody").append("<tr><td>"+sidePack.productTitle+"</td><td>"+1+"</td><td>"+sidePack.productPrice+"</td><td>"+sidePack.productPrice+"</td><td><input type='checkbox' class='inputToAdd' id="+sidePack.productId+"></td></tr>");
+    }
+    if(coverDoorwayQty >= 1){
+      if(standardorcommerical == "standard"){
+      var zipDoorkitTitle = "{{ all_products["zipdoor-stand-door-kit"].title }}";
+      var zipDoorkitPrice = "{{ all_products["zipdoor-stand-door-kit"].price }}";
+      var zipDoorId = "";
+      {% for variant in all_products["zipdoor-stand-door-kit"].variants %}
+        zipDoorId = {{ variant.id }};
+      {% endfor %}
+      var zipDoorkitSub = coverDoorwayQty * zipDoorkitPrice;
+      netTotal += zipDoorkitSub;
+      } else
+      {
+       zipDoorkitTitle = "{{ all_products["zipdoor-commercial-door-kit"].title }}";
+       zipDoorkitPrice = "{{ all_products["zipdoor-commercial-door-kit"].price }}";
+       {% for variant in all_products["zipdoor-commercial-door-kit"].variants %}
+        zipDoorId = {{ variant.id }};
+      {% endfor %}
+       console.log(zipDoorId)
+       zipDoorkitSub = coverDoorwayQty * zipDoorkitPrice;
+       netTotal += zipDoorkitSub;
+      }
+            suggestedTable.find("tbody").append("<tr><td>"+zipDoorkitTitle+"</td><td>"+coverDoorwayQty+"</td><td>"+Shopify.formatMoney(zipDoorkitPrice, window.theme.moneyFormat)+"</td><td>"+Shopify.formatMoney(zipDoorkitSub, window.theme.moneyFormat)+"</td><td><input type='checkbox' class='inputToAdd' data-quantity="+coverDoorwayQty+" id="+zipDoorId+" data-amount-zip="+coverDoorwayQty+"></td></tr>");
+
+    }
+    suggestedTable.find("tbody").append("<tr><td>Net Total</td><td colspan='2'></td><td>"+Shopify.formatMoney(netTotal, window.theme.moneyFormat)+"</td></tr>")
+    /* Hides the previous calculator content*/
+     preSubmit.hide();
+    var backtoCalc = $("<button class='button--primary button--full button--large' style='margin-bottom:15px;' id='goback'>Back to calculator</button>").insertAfter(suggestedTable);
+    goBack(preSubmit, suggestedTable, firstPart, youSelec, backtoCalc);
+  }
+  function goBack(preSubmit, suggestedTable, firstPart, youSelec, backtoCalc){
+  $('#goback').click(function(){
+    preSubmit.show();
+    suggestedTable.remove();
+    firstPart.remove();
+    youSelec.remove();
+    backtoCalc.remove();
+  }) 
+  }
+
+  function hideZipFast(){
+    var ceilingheightVal = $('#ceilingheight').val();
+    if(ceilingheightVal == "20"){
+      $('.fifthQues').hide();
+    }
+    else {
+      $('.fifthQues').show();
+    }
+  }
+  /* when calculate is pressed checkoptions function is ran */
+    $('#calculate').click(function(){
+      checkOptions();
+    });
+  $('#ceilingheight').change(function(){
+    console.log("ceilingheightval changed");
+   hideZipFast(); 
+  })
+ 
+  function checkedZipProds(){
+    var idS = [];
+    var quantityToAdd = [];
+  $('.inputToAdd').change(function(){
+   var inputsToCheck = $('.inputToAdd');
+    console.log("add this changed")
+    for(var i = 0; i < inputsToCheck.length; i++){
+        var isAlreadyIn = idS.indexOf(inputsToCheck[i].id.toString());
+      if(inputsToCheck[i].checked == true) {
+          if(isAlreadyIn == -1){
+        idS.push(inputsToCheck[i].id);
+        quantityToAdd.push(inputsToCheck[i].dataset.quantity);
+          }
+      }
+      else {
+         // Remove 'id' from array
+          idS = idS.filter(function(e) { return e !== inputsToCheck[i].id })
+          //=> ["three", "eleven"]
+          quantityToAdd = quantityToAdd.filter(function(e) { return e !== inputsToCheck[i].dataset.quantity})
+      }
+    }
+     
+  });
+       $('.product-form__add-button').click(function(){
+        addZipProds(idS, quantityToAdd);
+    })
+}
+
+  
+  function addZipProds(idS, qty){
+     var zipwallInputs = $('.inputToAdd');
+     $.each(idS, function( index, value ) {
+         var qtytoAdd = qty[index];
+        $.ajax({
+            url: '/cart/add.js',
+            type: 'post',
+            async: false,
+            dataType: 'json',
+            data: {
+                quantity: qtytoAdd,
+                id: value,
+                properties: {
+                    '_Added with' : 'ZipWall calculator'
+                }
+            },
+            success: function(itemData) {
+                console.log("success", itemData)
+                /* theme custom event to open the cart drawer */
+                document.documentElement.dispatchEvent(new CustomEvent('product:added', {
+                    bubbles: true,
+                    detail: {
+                        quantity: 1
+                    }
+                }));
+            },
+            error: function(XMLHttpRequest) {
+                console.log(XMLHttpRequest)
+                if(XMLHttpRequest.status == 422){
+                    alert(value)
+                }
+            }
+        });
+	 });
+   document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+    bubbles: true
+  }));
+ 
+  }
+</script>
